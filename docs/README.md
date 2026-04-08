@@ -1,22 +1,33 @@
-# 📚 Tutorial: Sistema de Gestión de Restaurante con Spring Boot y JPA
+# 📚 Tutorial: Sistema de Gestión de Adopción de Mascotas con Spring Boot y JPA
 
 ## Índice de contenidos
 
 | Archivo | Tema |
 |---------|------|
-| [00-introduccion.md](./00-introduccion.md) | ¿Qué es Spring Boot? ¿Qué es JPA? Conceptos base |
-| [01-estructura-proyecto.md](./01-estructura-proyecto.md) | Estructura de paquetes y responsabilidades |
-| [02-herencia-base-entity.md](./02-herencia-base-entity.md) | Herencia con `@MappedSuperclass` y auditoría JPA |
-| [03-composicion-embeddable.md](./03-composicion-embeddable.md) | Composición con `@Embeddable` |
-| [04-enumeraciones.md](./04-enumeraciones.md) | Enumeraciones con `@Enumerated` |
-| [05-entidades.md](./05-entidades.md) | Entidades `Mesa`, `Mesero` y `Pedido` con relaciones |
-| [06-repositorios.md](./06-repositorios.md) | Repositorios JPA y consultas derivadas |
-| [07-servicios.md](./07-servicios.md) | Capa de servicio y lógica de negocio |
-| [08-dtos.md](./08-dtos.md) | Exponiendo Entidades en la API |
-| [09-controladores.md](./09-controladores.md) | Controladores REST y endpoints |
-| [10-flujo-completo.md](./10-flujo-completo.md) | Flujo completo de una petición HTTP |
-| [11-openapi-swagger.md](./11-openapi-swagger.md) | OpenAPI 3 y Swagger UI — documentación interactiva |
+| [Pruebas-logica-de-negocio.md](./Pruebas-logica-de-negocio.md) | Pruebas paso a paso de la lógica de negocio |
 
 ---
 
-> 💡 **Recomendación:** Lee los archivos en orden. Cada uno construye sobre el anterior.
+## 🐶 Sobre el proyecto
+
+Este proyecto es un ejemplo básico de una API REST para gestionar solicitudes de adopción de mascotas. Incluye las siguientes funcionalidades clave:
+
+- **Mascotas**: Gestión de mascotas con diferentes estados (Disponible, En Proceso, Adoptado) y tamaños.
+- **Adoptantes**: Gestión de adoptantes con validaciones de edad y requisitos de vivienda (como tener patio para mascotas grandes).
+- **Solicitudes**: Proceso de creación de solicitudes de adopción con lógica de negocio integrada en la capa de servicio.
+
+## 🛠️ Tecnologías
+
+- **Spring Boot 3.x**
+- **Spring Data JPA**
+- **PostgreSQL** (para persistencia)
+- **H2** (para pruebas)
+- **OpenAPI 3 / Swagger UI** (para documentación interactiva)
+
+## ⚖️ Manejo de Errores
+
+El proyecto cuenta con un manejador global de excepciones ([GlobalExceptionHandler.java](../src/main/java/com/example/demo_basic/exception/GlobalExceptionHandler.java)) que intercepta errores comunes como `IllegalArgumentException` y los traduce en respuestas HTTP claras (ej. 400 Bad Request) para el cliente, evitando los errores 500 genéricos.
+
+---
+
+> 💡 **Recomendación:** Comienza revisando la [Guía de Pruebas de Lógica de Negocio](./Pruebas-logica-de-negocio.md) para entender cómo interactuar con los endpoints de la API.
