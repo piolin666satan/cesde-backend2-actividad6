@@ -7,10 +7,10 @@ import com.example.demo_basic.model.entity.CitaEntity;
 
 public interface CitaRepository extends JpaRepository<CitaEntity, Long> {
     
-    // Al usar el guion bajo (_Id), Spring busca el atributo 'id' dentro de 'odontologo'
-    // Como tu variable en CitaEntity ya se llama 'odontologo', esto funcionará perfecto.
+    //verifica que el odontologo no tenga una cita en el mismo horario.
     boolean existsByOdontologo_IdAndFechaHora(Long odontologoId, LocalDateTime fechaHora);
 
+    //Cuenta cuántas citas "Pendiente" tiene un paciente en una semana determinada.
     @Query("SELECT COUNT(c) FROM CitaEntity c WHERE c.paciente.id = :pacienteId " + 
         "AND c.estado = 'PENDIENTE' " + 
         "AND c.fechaHora BETWEEN :inicio AND :fin")
