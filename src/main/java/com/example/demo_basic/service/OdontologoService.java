@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo_basic.model.entity.Odontologo;
+import com.example.demo_basic.model.entity.OdontologoEntity;
 import com.example.demo_basic.repository.OdontologoRepository;
 
 @Service
@@ -13,15 +13,15 @@ public class OdontologoService {
     @Autowired
     private OdontologoRepository odontologoRepository;
 
-    public List<Odontologo> listarTodos() {
+    public List<OdontologoEntity> listarTodos() {
         return odontologoRepository.findAll();
     }
 
-    public Odontologo guardar(Odontologo odontologo) {
+    public OdontologoEntity guardar(OdontologoEntity odontologo) {
         return odontologoRepository.save(odontologo);
     }
 
-    public Odontologo obtenerPorId(Long id) {
+    public OdontologoEntity obtenerPorId(Long id) {
         return odontologoRepository.findById(id).orElse(null);
     }
 

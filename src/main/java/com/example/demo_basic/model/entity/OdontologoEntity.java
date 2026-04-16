@@ -4,6 +4,10 @@ import com.example.demo_basic.model.enums.TipoEspecialidad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,8 +33,8 @@ public class OdontologoEntity extends BaseEntity {
     private int tarjetaProfesional;
 
     @ManyToOne
-    private Paciente paciente;
+    private PacienteEntity paciente;
 
-    @ManyToMany
-    private Cita cita;
+    @ManyToOne
+    private CitaEntity cita;
 }

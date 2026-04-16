@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo_basic.model.entity.Odontologo;
+import com.example.demo_basic.model.entity.OdontologoEntity;
 import com.example.demo_basic.service.OdontologoService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -22,17 +22,17 @@ public class OdontologoController {
     private OdontologoService odontologoService;
 
     @GetMapping
-    public List<Odontologo> listar() {
+    public List<OdontologoEntity> listar() {
         return odontologoService.listarTodos();
     }
 
     @PostMapping
-    public Odontologo crear(@RequestBody Odontologo odontologo) {
+    public OdontologoEntity crear(@RequestBody OdontologoEntity odontologo) {
         return odontologoService.guardar(odontologo);
     }
 
     @GetMapping("/{id}")
-    public Odontologo obtener(@PathVariable Long id) {
+    public OdontologoEntity obtener(@PathVariable Long id) {
         return odontologoService.obtenerPorId(id);
     }
 
