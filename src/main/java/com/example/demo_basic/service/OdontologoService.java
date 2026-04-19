@@ -1,7 +1,7 @@
 package com.example.demo_basic.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +10,7 @@ import com.example.demo_basic.repository.OdontologoRepository;
 
 @Service
 public class OdontologoService {
+
     @Autowired
     private OdontologoRepository odontologoRepository;
 
@@ -18,7 +19,27 @@ public class OdontologoService {
     }
 
     public OdontologoEntity guardar(OdontologoEntity odontologo) {
+        // Lógica de negocio 1: Tarjeta profesional positiva
+        if (odontologo.getTarjetaProfesional() <= 0) {
+            throw new RuntimeException("La tarjeta profesional debe ser un número positivo.");
+        }
         return odontologoRepository.save(odontologo);
+    }
+
+    // ESTA ES LA QUE LE DABA ERROR - CORREGIDA PARA SU ENTIDAD
+    public void validarDisponibilidad(Long odontologoId, LocalDateTime fechaHoraNueva) {
+        OdontologoEntity odontologo = odontologoRepository.findById(odontologoId)
+                .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado"));
+
+        // Como en su entity 'cita' es un solo objeto, comparamos directo
+        if (odontologo.getCita() != null) {
+            LocalDateTime fechaCitaActual = odontologo.getCita().getFechaHora();
+            
+            if (fechaCitaActual.equals(fechaHoraNueva)) {
+                throw new RuntimeException("El odontólogo " + odontologo.getNombre() + 
+                                           " ya tiene una cita en ese horario.");
+            }
+        }
     }
 
     public OdontologoEntity obtenerPorId(Long id) {
@@ -29,4 +50,3 @@ public class OdontologoService {
         odontologoRepository.deleteById(id);
     }
 }
-
