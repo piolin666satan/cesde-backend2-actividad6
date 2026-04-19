@@ -38,4 +38,9 @@ public class CitaEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "odontologo_id", nullable = false)
     private OdontologoEntity odontologo;
+
+    public Object stream() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'stream'");
+    }
 }

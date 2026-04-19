@@ -13,5 +13,4 @@ public class PacienteEntity extends BaseEntity {
 
     private String nombre;
     private String documento;
-    // Otros campos...
 }
