@@ -10,13 +10,13 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "Paciente")
+@Table(name = "PacienteEntity")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Paciente extends BaseEntity {
+public class PacienteEntity extends BaseEntity {
     
     @Column(name = "nombre", nullable = false, length = 80)
     private String nombre;
@@ -26,4 +26,6 @@ public class Paciente extends BaseEntity {
 
     @Column(name = "tiene_seguro", nullable = false)
     private Boolean tieneSeguro;
+
+    
 }

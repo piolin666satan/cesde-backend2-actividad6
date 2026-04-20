@@ -1,7 +1,13 @@
 package com.example.demo_basic.model.entity;
 
+import com.example.demo_basic.model.enums.TipoEspecialidad;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,14 +21,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "odontologos")
 
-public class Odontologo extends BaseEntity {
+public class OdontologoEntity extends BaseEntity {
     
-    @Column(name = "nombre", nullable = false, length = 80)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "especialidad", nullable = false, length = 100)
-    private String especialidad;
+    @Enumerated(EnumType.STRING)
+    private TipoEspecialidad especialidad;
 
     @Column(name = "tarjeta_profesional", nullable = false, unique = true)
     private int tarjetaProfesional;
+
+    @ManyToOne
+    private PacienteEntity paciente;
+
+    @ManyToOne
+    private CitaEntity cita;
 }
