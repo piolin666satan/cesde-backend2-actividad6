@@ -22,10 +22,18 @@ public class PacienteEntity extends BaseEntity {
     private String nombre;
 
     @Column(name = "edad", nullable = false)
-    private Integer edad;
+    private Integer  edad;
 
     @Column(name = "tiene_seguro", nullable = false)
     private Boolean tieneSeguro;
 
+    @Column(name = "nombre_acudiente", length = 80)
+    private String nombreAcudiente; 
+
+     public int getEdad() { return edad; }
+     public boolean isTieneSeguro() { return tieneSeguro; }
+     public String getNombreAcudiente() { return nombreAcudiente; }
+
+ 
     
 }

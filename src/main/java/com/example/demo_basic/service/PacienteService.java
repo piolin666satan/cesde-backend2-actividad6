@@ -18,27 +18,24 @@ public class PacienteService {
     }
 
     public PacienteEntity guardarPaciente(PacienteEntity paciente) {
-        // Validación de nombre
+        
         if (paciente.getNombre() == null || paciente.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del paciente es obligatorio");
         }
 
-        // Validación de edad
-        if (paciente.getEdad() == null || paciente.getEdad() <= 0 || paciente.getEdad() > 120) {
-            throw new IllegalArgumentException("La edad debe estar entre 1 y 120 años");
+        
+        if (paciente.getEdad() == 0 || paciente.getEdad() <= 0 || paciente.getEdad() > 120) {
+        throw new IllegalArgumentException("La edad debe estar entre 1 y 120 años");
         }
 
-        // Validación de seguro
         if (paciente.getTieneSeguro() == null) {
             throw new IllegalArgumentException("Debe especificar si el paciente tiene seguro");
         }
 
-        // Validación de duplicados (ejemplo simple)
-        boolean existe = pacienteRepository
-                .findAll()
-                .stream()
-                .anyMatch(p -> p.getNombre().equalsIgnoreCase(paciente.getNombre())
-                        && p.getEdad().equals(paciente.getEdad()));
+        
+        boolean existe = pacienteRepository.findAll().stream()
+            .anyMatch(p -> p.getNombre().equalsIgnoreCase(paciente.getNombre())
+                    && p.getEdad() == paciente.getEdad());
         if (existe) {
             throw new IllegalArgumentException("Ya existe un paciente con ese nombre y edad");
         }
@@ -57,5 +54,12 @@ public Optional<PacienteEntity> buscarPorId(Long id) {
 public void eliminarPaciente(Long id) {
         pacienteRepository.deleteById(id);
     }
+    
+    public boolean requiereAcudiente(PacienteEntity paciente, String nombreAcudiente) {
+        return paciente.getEdad() < 18 &&
+                (nombreAcudiente == null || nombreAcudiente.isEmpty());
+    }
+
+
 
 }

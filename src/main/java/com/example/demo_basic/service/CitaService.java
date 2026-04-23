@@ -8,14 +8,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo_basic.model.embeddable.DetalleCita;
 import com.example.demo_basic.model.dto.CitaDTO;
+import com.example.demo_basic.model.embeddable.DetalleCita;
 import com.example.demo_basic.model.entity.CitaEntity;
 import com.example.demo_basic.model.entity.OdontologoEntity;
 import com.example.demo_basic.model.entity.PacienteEntity;
 import com.example.demo_basic.model.enums.EstadoCita;
-//import com.example.demo_basic.repository.OdontologoRepository;
-//import com.example.demo_basic.repository.PacienteRepository;
 import com.example.demo_basic.repository.CitaRepository;
 
 @Service
@@ -30,6 +28,9 @@ public class CitaService {
     //@Autowired
     //private PacienteRepository pacienteRepository;
 
+    @Autowired
+    private PacienteService pacienteService;
+
     public CitaEntity crearCita(CitaDTO dto) {
 
         // 1. Validar choque de horario del odontologo.
@@ -40,20 +41,24 @@ public class CitaService {
         //Verificar que el paciente no tenga mas de una cita.
         double costoFinal = (dto.getCosto() != null) ? dto.getCosto() : 0.0;
 
-/*
-        PacienteEntity paciente = pacienteService.obtenerPorId(dto.getPacienteId());
-        
-        // Regla: Si es menor de edad, requerir acudiente
+
+
+ // ✅ CORRECTO: Usamos la instancia 'pacienteService' y el ID del DTO
+        PacienteEntity paciente = pacienteService.buscarPorId(dto.getPacienteId())
+        .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+
+        // Regla: Si es menor de edad, requerir acudiente*/
         if (paciente.getEdad() < 18 && (dto.getNombreAcudiente() == null || dto.getNombreAcudiente().isEmpty())) {
             throw new RuntimeException("Paciente menor de edad requiere acudiente obligatorio.");
         }
 
-        // Regla: Calcular costo (30% descuento si tiene seguro)
-        if (paciente.getTieneSeguro()) {
-            costoFinal = costoFinal * 0.70;
-        }
-        */
-
+        // Regla: Calcular costo (30% descuento si tiene seguro)*>*/
+       if (Boolean.TRUE.equals(paciente.getTieneSeguro())) {
+        costoFinal *= 0.70; // Esto es lo mismo que costoFinal = costoFinal * 0.70
+}
+        
+         
         // 3. Validar máximo una cita "Pendiente" en la misma semana
         LocalDateTime inicioSemana = dto.getFechaHora().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
         LocalDateTime finSemana = inicioSemana.plusDays(6).with(LocalTime.MAX);
@@ -62,7 +67,7 @@ public class CitaService {
             throw new RuntimeException("El paciente ya tiene una cita pendiente esta semana.");
         }
 
-
+        
         //Entidad
         CitaEntity cita = new CitaEntity();
         cita.setFechaHora(dto.getFechaHora());
