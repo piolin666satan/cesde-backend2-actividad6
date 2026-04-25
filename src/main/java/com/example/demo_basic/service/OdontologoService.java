@@ -19,19 +19,16 @@ public class OdontologoService {
     }
 
     public OdontologoEntity guardar(OdontologoEntity odontologo) {
-        // Lógica de negocio 1: Tarjeta profesional positiva
         if (odontologo.getTarjetaProfesional() <= 0) {
             throw new RuntimeException("La tarjeta profesional debe ser un número positivo.");
         }
         return odontologoRepository.save(odontologo);
     }
 
-    // ESTA ES LA QUE LE DABA ERROR - CORREGIDA PARA SU ENTIDAD
     public void validarDisponibilidad(Long odontologoId, LocalDateTime fechaHoraNueva) {
         OdontologoEntity odontologo = odontologoRepository.findById(odontologoId)
                 .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado"));
 
-        // Como en su entity 'cita' es un solo objeto, comparamos directo
         if (odontologo.getCita() != null) {
             LocalDateTime fechaCitaActual = odontologo.getCita().getFechaHora();
             

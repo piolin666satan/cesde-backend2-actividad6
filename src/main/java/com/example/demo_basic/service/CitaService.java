@@ -14,8 +14,8 @@ import com.example.demo_basic.model.entity.CitaEntity;
 import com.example.demo_basic.model.entity.OdontologoEntity;
 import com.example.demo_basic.model.entity.PacienteEntity;
 import com.example.demo_basic.model.enums.EstadoCita;
-//import com.example.demo_basic.repository.OdontologoRepository;
-//import com.example.demo_basic.repository.PacienteRepository;
+import com.example.demo_basic.repository.OdontologoRepository;
+import com.example.demo_basic.repository.PacienteRepository;
 import com.example.demo_basic.repository.CitaRepository;
 
 @Service
@@ -24,11 +24,11 @@ public class CitaService {
     @Autowired
     private CitaRepository citaRepository;
 
-    //@Autowired
-    //private OdontologoRepository odontologoRepository;
+    @Autowired
+    private OdontologoRepository odontologoRepository;
 
-    //@Autowired
-    //private PacienteRepository pacienteRepository;
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     public CitaEntity crearCita(CitaDTO dto) {
 
@@ -37,11 +37,11 @@ public class CitaService {
             throw new RuntimeException("El odontólogo ya tiene una cita en ese horario.");
         }
 
-        //Verificar que el paciente no tenga mas de una cita.
         double costoFinal = (dto.getCosto() != null) ? dto.getCosto() : 0.0;
 
-/*
-        PacienteEntity paciente = pacienteService.obtenerPorId(dto.getPacienteId());
+        // Buscamos el paciente real de la base de datos
+        PacienteEntity paciente = pacienteRepository.findById(dto.getPacienteId())
+            .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + dto.getPacienteId()));
         
         // Regla: Si es menor de edad, requerir acudiente
         if (paciente.getEdad() < 18 && (dto.getNombreAcudiente() == null || dto.getNombreAcudiente().isEmpty())) {
@@ -54,7 +54,6 @@ public class CitaService {
         }
         */
 
-        // 3. Validar máximo una cita "Pendiente" en la misma semana
         LocalDateTime inicioSemana = dto.getFechaHora().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
         LocalDateTime finSemana = inicioSemana.plusDays(6).with(LocalTime.MAX);
         
@@ -62,23 +61,22 @@ public class CitaService {
             throw new RuntimeException("El paciente ya tiene una cita pendiente esta semana.");
         }
 
+        // Buscamos el odontólogo real de la base de datos
+        OdontologoEntity odontologo = odontologoRepository.findById(dto.getOdontologoId())
+            .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado con ID: " + dto.getOdontologoId()));
 
-        //Entidad
         CitaEntity cita = new CitaEntity();
         cita.setFechaHora(dto.getFechaHora());
         cita.setEstado(EstadoCita.PENDIENTE);
 
-        //Embebido
         DetalleCita detalle = new DetalleCita();
         detalle.setMotivoCita(dto.getMotivoCita());
         detalle.setCosto(costoFinal);
         cita.setDetalleCita(detalle);
 
-        PacienteEntity p = new PacienteEntity(); p.setId(dto.getPacienteId());
-        cita.setPaciente(p);
-        
-        OdontologoEntity o = new OdontologoEntity(); o.setId(dto.getOdontologoId());
-        cita.setOdontologo(o);
+        // Asignamos las entidades PERSISTIDAS (traídas del repo)
+        cita.setPaciente(paciente);
+        cita.setOdontologo(odontologo);
 
         return citaRepository.save(cita);
     }
@@ -86,7 +84,6 @@ public class CitaService {
     public void cancelarCita(Long id) {
         CitaEntity cita = citaRepository.findById(id).orElseThrow();
 
-        // 4. Impedir cancelación si faltan menos de 2 horas
         if (LocalDateTime.now().plusHours(2).isAfter(cita.getFechaHora())) {
             throw new RuntimeException("No se puede cancelar con menos de 2 horas de anticipación.");
         }
@@ -97,5 +94,4 @@ public class CitaService {
     public List<CitaEntity> obtenerTodas() {
         return citaRepository.findAll();
     }
-    
 }
