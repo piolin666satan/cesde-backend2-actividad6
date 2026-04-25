@@ -37,23 +37,14 @@ public class CitaService {
             throw new RuntimeException("El odontólogo ya tiene una cita en ese horario.");
         }
 
+        // 2. Definir costo inicial
         double costoFinal = (dto.getCosto() != null) ? dto.getCosto() : 0.0;
 
-        // Buscamos el paciente real de la base de datos
+        // 3. Buscamos el paciente real de la base de datos
         PacienteEntity paciente = pacienteRepository.findById(dto.getPacienteId())
             .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + dto.getPacienteId()));
-        
-        // Regla: Si es menor de edad, requerir acudiente
-        if (paciente.getEdad() < 18 && (dto.getNombreAcudiente() == null || dto.getNombreAcudiente().isEmpty())) {
-            throw new RuntimeException("Paciente menor de edad requiere acudiente obligatorio.");
-        }
 
-        // Regla: Calcular costo (30% descuento si tiene seguro)
-        if (paciente.getTieneSeguro()) {
-            costoFinal = costoFinal * 0.70;
-        }
-        */
-
+        // 4. Validar límite de citas por semana
         LocalDateTime inicioSemana = dto.getFechaHora().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
         LocalDateTime finSemana = inicioSemana.plusDays(6).with(LocalTime.MAX);
         
@@ -61,10 +52,11 @@ public class CitaService {
             throw new RuntimeException("El paciente ya tiene una cita pendiente esta semana.");
         }
 
-        // Buscamos el odontólogo real de la base de datos
+        // 5. Buscamos el odontólogo real de la base de datos
         OdontologoEntity odontologo = odontologoRepository.findById(dto.getOdontologoId())
             .orElseThrow(() -> new RuntimeException("Odontólogo no encontrado con ID: " + dto.getOdontologoId()));
 
+        // 6. Construir la entidad Cita
         CitaEntity cita = new CitaEntity();
         cita.setFechaHora(dto.getFechaHora());
         cita.setEstado(EstadoCita.PENDIENTE);
@@ -74,7 +66,7 @@ public class CitaService {
         detalle.setCosto(costoFinal);
         cita.setDetalleCita(detalle);
 
-        // Asignamos las entidades PERSISTIDAS (traídas del repo)
+        // 7. Asignar relaciones persistidas
         cita.setPaciente(paciente);
         cita.setOdontologo(odontologo);
 
